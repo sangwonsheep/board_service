@@ -2,27 +2,17 @@ package project.boardservice.service;
 
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import project.boardservice.domain.Member;
+import project.boardservice.dto.MemberDto;
 import project.boardservice.exception.MemberNameDuplicateException;
 import project.boardservice.exception.MemberNicknameDuplicateException;
 import project.boardservice.repository.MemberRepository;
-import project.boardservice.repository.MemberUpdateDto;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
-import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 @Slf4j
 @SpringBootTest
@@ -37,12 +27,19 @@ class MemberServiceTest {
     void save() {
         //given
         Member member = createMember();
+        MemberDto memberDto = new MemberDto(member);
 
         //when
-        Member savedMember = memberService.save(member);
+        Member savedMember = memberService.save(memberDto);
+
+        // member != savedMember
+        log.info("id = {}", member.getId());
+        log.info("id = {}", savedMember.getId());
 
         //then
-        assertThat(member).isEqualTo(savedMember);
+        assertThat(member.getName()).isEqualTo(savedMember.getName());
+        assertThat(member.getPassword()).isEqualTo(savedMember.getPassword());
+        assertThat(member.getNickname()).isEqualTo(savedMember.getNickname());
     }
 
     //https://kth990303.tistory.com/451
@@ -52,11 +49,14 @@ class MemberServiceTest {
         Member member1 = createMember();
         Member member2 = createMember();
 
+        MemberDto memberDto1 = new MemberDto(member1);
+        MemberDto memberDto2 = new MemberDto(member2);
+
         // when
-        memberService.save(member1);
+        memberService.save(memberDto1);
 
         //then
-        assertThatThrownBy(() -> memberService.save(member2))
+        assertThatThrownBy(() -> memberService.save(memberDto2))
                 .isInstanceOf(MemberNameDuplicateException.class);
     }
 
@@ -64,37 +64,19 @@ class MemberServiceTest {
     void update() {
         //given
         Member member = createMember();
-        Member savedMember = memberService.save(member);
+        MemberDto memberDto = new MemberDto(member);
+        Member savedMember = memberService.save(memberDto);
         Long id = savedMember.getId();
 
         //when
-        MemberUpdateDto updateParam = new MemberUpdateDto("kkk", "bcd", "임");
+        MemberDto updateParam = new MemberDto("kkk", "bcdqqwed", "임꺽정");
         memberService.update(id, updateParam);
 
         //then
         Member findMember = memberService.findById(id).orElseThrow();
-        assertThat(findMember.getName()).isEqualTo(updateParam.getName());
+        assertThat(findMember.getName()).isNotEqualTo(updateParam.getName()); // 아이디(name)는 변경되면 안됨.
         assertThat(findMember.getPassword()).isEqualTo(updateParam.getPassword());
         assertThat(findMember.getNickname()).isEqualTo(updateParam.getNickname());
-    }
-
-    @Test
-    void 회원정보수정_아이디중복() {
-        //given
-        Member member1 = createMember();
-        Member member2 = new Member();
-        member2.setName("kimi");
-        member2.setPassword("qwe");
-        member2.setNickname("김김");
-
-        //when
-        memberService.save(member1);
-        Member updateMember = memberService.save(member2);
-        MemberUpdateDto updateParam = new MemberUpdateDto("kim", "bcd", "임");
-
-        //then
-        assertThatThrownBy(() -> memberService.update(updateMember.getId(), updateParam))
-                .isInstanceOf(MemberNameDuplicateException.class);
     }
 
     @Test
@@ -103,13 +85,16 @@ class MemberServiceTest {
         Member member1 = createMember();
         Member member2 = new Member();
         member2.setName("kimi");
-        member2.setPassword("qwe");
+        member2.setPassword("qweqweqwe");
         member2.setNickname("김김");
 
+        MemberDto memberDto1 = new MemberDto(member1);
+        MemberDto memberDto2 = new MemberDto(member2);
+
         //when
-        memberService.save(member1);
-        Member updateMember = memberService.save(member2);
-        MemberUpdateDto updateParam = new MemberUpdateDto("qwe", "bcd", "김");
+        memberService.save(memberDto1);
+        Member updateMember = memberService.save(memberDto2);
+        MemberDto updateParam = new MemberDto("qwe", "bcddsadse", "김기자");
 
         //then
         assertThatThrownBy(() -> memberService.update(updateMember.getId(), updateParam))
@@ -119,8 +104,9 @@ class MemberServiceTest {
     private Member createMember() {
         Member member = new Member();
         member.setName("kim");
-        member.setPassword("abc");
-        member.setNickname("김");
+        member.setPassword("qweqweqwe");
+        member.setNickname("김기자");
         return member;
     }
+
 }

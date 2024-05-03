@@ -1,18 +1,21 @@
 package project.boardservice.service;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import project.boardservice.domain.Member;
+import project.boardservice.dto.MemberDto;
 import project.boardservice.exception.MemberNameDuplicateException;
 import project.boardservice.exception.MemberNicknameDuplicateException;
 import project.boardservice.repository.MemberRepository;
-import project.boardservice.repository.MemberUpdateDto;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Validated
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
@@ -21,8 +24,9 @@ public class MemberService {
 
     // 회원 가입
     @Transactional
-    public Member save(Member member) {
-        validateDuplicateSaveMember(member);
+    public Member save(@Valid MemberDto memberDto) {
+        Member member = new Member(memberDto.getName(), memberDto.getPassword(), memberDto.getNickname());
+        validateDuplicateSaveMember(memberDto);
         memberRepository.save(member);
         return member;
     }
@@ -34,35 +38,30 @@ public class MemberService {
 
     // 회원 정보 수정
     @Transactional
-    public void update(Long id, MemberUpdateDto updateParam) {
+    public void update(Long id, @Valid MemberDto updateParam) {
         Member member = memberRepository.findById(id).orElseThrow();
         validateDuplicateUpdateMember(updateParam);
-        member.updateMember(updateParam.getName(), updateParam.getPassword(), updateParam.getNickname());
+        member.updateMember(updateParam.getPassword(), updateParam.getNickname());
     }
 
-    // 저장할 때 회원 중복 검사
-    private void validateDuplicateSaveMember(Member member) {
-        List<Member> findMembersName = memberRepository.findByName(member.getName());
+    // 저장 시 회원 중복 검사
+    private void validateDuplicateSaveMember(MemberDto memberDto) {
+        List<Member> findMembersName = memberRepository.findByName(memberDto.getName());
         if (!findMembersName.isEmpty()) {
             throw new MemberNameDuplicateException("이미 존재하는 아이디입니다.");
         }
 
-        List<Member> findMembersNickname = memberRepository.findByNickname(member.getNickname());
+        List<Member> findMembersNickname = memberRepository.findByNickname(memberDto.getNickname());
         if (!findMembersNickname.isEmpty()) {
-            throw new MemberNicknameDuplicateException("이미 존재하는 이름입니다.");
+            throw new MemberNicknameDuplicateException("이미 사용 중인 이름입니다.");
         }
     }
 
-    // 수정할 때 중복 검사
-    private void validateDuplicateUpdateMember(MemberUpdateDto updateParam) {
-        List<Member> findMembersName = memberRepository.findByName(updateParam.getName());
-        if (!findMembersName.isEmpty()) {
-            throw new MemberNameDuplicateException("이미 존재하는 아이디입니다.");
-        }
-
-        List<Member> findMembersNickname = memberRepository.findByNickname(updateParam.getNickname());
+    // 수정 시 회원 중복 검사
+    private void validateDuplicateUpdateMember(MemberDto memberDto) {
+        List<Member> findMembersNickname = memberRepository.findByNickname(memberDto.getNickname());
         if (!findMembersNickname.isEmpty()) {
-            throw new MemberNicknameDuplicateException("이미 존재하는 이름입니다.");
+            throw new MemberNicknameDuplicateException("이미 사용 중인 이름입니다.");
         }
     }
 
