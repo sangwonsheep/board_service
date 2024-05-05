@@ -1,5 +1,6 @@
 package project.boardservice.exception;
 
+// 회원 아이디 중복 예외
 public class MemberNameDuplicateException extends RuntimeException{
 
     public MemberNameDuplicateException() {

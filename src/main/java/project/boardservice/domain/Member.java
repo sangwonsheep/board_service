@@ -35,12 +35,14 @@ public class Member {
     public Member() {
     }
 
+    // 생성
     public Member(String name, String password, String nickname) {
         this.name = name;
         this.password = password;
         this.nickname = nickname;
     }
 
+    // 수정
     public void updateMember(String password, String nickname) {
         this.password = password;
         this.nickname = nickname;

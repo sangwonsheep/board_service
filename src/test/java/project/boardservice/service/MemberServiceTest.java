@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import project.boardservice.domain.Member;
-import project.boardservice.dto.MemberDto;
+import project.boardservice.dto.MemberSaveDto;
+import project.boardservice.dto.MemberUpdateDto;
 import project.boardservice.exception.MemberNameDuplicateException;
 import project.boardservice.exception.MemberNicknameDuplicateException;
 import project.boardservice.repository.MemberRepository;
@@ -27,10 +28,10 @@ class MemberServiceTest {
     void save() {
         //given
         Member member = createMember();
-        MemberDto memberDto = new MemberDto(member);
+        MemberSaveDto memberSaveDto = new MemberSaveDto(member);
 
         //when
-        Member savedMember = memberService.save(memberDto);
+        Member savedMember = memberService.save(memberSaveDto);
 
         // member != savedMember
         log.info("id = {}", member.getId());
@@ -49,14 +50,14 @@ class MemberServiceTest {
         Member member1 = createMember();
         Member member2 = createMember();
 
-        MemberDto memberDto1 = new MemberDto(member1);
-        MemberDto memberDto2 = new MemberDto(member2);
+        MemberSaveDto memberSaveDto1 = new MemberSaveDto(member1);
+        MemberSaveDto memberSaveDto2 = new MemberSaveDto(member2);
 
         // when
-        memberService.save(memberDto1);
+        memberService.save(memberSaveDto1);
 
         //then
-        assertThatThrownBy(() -> memberService.save(memberDto2))
+        assertThatThrownBy(() -> memberService.save(memberSaveDto2))
                 .isInstanceOf(MemberNameDuplicateException.class);
     }
 
@@ -64,17 +65,16 @@ class MemberServiceTest {
     void update() {
         //given
         Member member = createMember();
-        MemberDto memberDto = new MemberDto(member);
+        MemberSaveDto memberDto = new MemberSaveDto(member);
         Member savedMember = memberService.save(memberDto);
         Long id = savedMember.getId();
 
         //when
-        MemberDto updateParam = new MemberDto("kkk", "bcdqqwed", "임꺽정");
+        MemberUpdateDto updateParam = new MemberUpdateDto("bcdqqwed", "임꺽정");
         memberService.update(id, updateParam);
 
         //then
         Member findMember = memberService.findById(id).orElseThrow();
-        assertThat(findMember.getName()).isNotEqualTo(updateParam.getName()); // 아이디(name)는 변경되면 안됨.
         assertThat(findMember.getPassword()).isEqualTo(updateParam.getPassword());
         assertThat(findMember.getNickname()).isEqualTo(updateParam.getNickname());
     }
@@ -88,13 +88,13 @@ class MemberServiceTest {
         member2.setPassword("qweqweqwe");
         member2.setNickname("김김");
 
-        MemberDto memberDto1 = new MemberDto(member1);
-        MemberDto memberDto2 = new MemberDto(member2);
+        MemberSaveDto memberSaveDto1 = new MemberSaveDto(member1);
+        MemberSaveDto memberSaveDto2 = new MemberSaveDto(member2);
 
         //when
-        memberService.save(memberDto1);
-        Member updateMember = memberService.save(memberDto2);
-        MemberDto updateParam = new MemberDto("qwe", "bcddsadse", "김기자");
+        memberService.save(memberSaveDto1);
+        Member updateMember = memberService.save(memberSaveDto2);
+        MemberUpdateDto updateParam = new MemberUpdateDto("bcddsadse", "김기자");
 
         //then
         assertThatThrownBy(() -> memberService.update(updateMember.getId(), updateParam))
