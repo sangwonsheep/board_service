@@ -15,9 +15,8 @@ public class PostRepository {
     private final EntityManager em;
 
     // 게시글 저장
-    public Post save(Post post) {
+    public void save(Post post) {
         em.persist(post);
-        return post;
     }
 
     // 게시글 전체 조회

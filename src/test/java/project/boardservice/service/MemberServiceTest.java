@@ -1,6 +1,5 @@
 package project.boardservice.service;
 
-import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import project.boardservice.dto.MemberSaveDto;
 import project.boardservice.dto.MemberUpdateDto;
 import project.boardservice.exception.MemberNameDuplicateException;
 import project.boardservice.exception.MemberNicknameDuplicateException;
-import project.boardservice.repository.MemberRepository;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -20,9 +18,7 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 class MemberServiceTest {
 
-    @Autowired EntityManager em;
     @Autowired MemberService memberService;
-    @Autowired MemberRepository memberRepository;
 
     @Test
     void save() {

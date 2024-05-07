@@ -3,8 +3,8 @@ package project.boardservice.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
-import project.boardservice.dto.PostDto;
+import project.boardservice.dto.PostSaveDto;
+import project.boardservice.dto.PostUpdateDto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,10 +52,10 @@ public class Post {
     }
 
     // 생성 메서드
-    public static Post createPost(Member member, PostDto postDto) {
+    public static Post createPost(Member member, PostSaveDto postSaveDto) {
         Post post = new Post();
-        post.setTitle(postDto.getTitle());
-        post.setContent(postDto.getContent());
+        post.setTitle(postSaveDto.getTitle());
+        post.setContent(postSaveDto.getContent());
         post.setView(0L);
         post.setCreatedDate(LocalDateTime.now());
         post.setModifiedDate(LocalDateTime.now());

@@ -1,18 +1,18 @@
 package project.boardservice.dto;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class PostDto {
+public class CommentUpdateDto {
 
-    private String title;
+    @NotEmpty
     private String content;
     private LocalDateTime modifiedDate;
 
-    public PostDto(String title, String content) {
-        this.title = title;
+    public CommentUpdateDto(String content) {
         this.content = content;
         this.modifiedDate = LocalDateTime.now();
     }

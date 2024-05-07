@@ -15,9 +15,8 @@ public class MemberRepository {
     private final EntityManager em;
 
     // 회원 가입
-    public Member save(Member member) {
+    public void save(Member member) {
         em.persist(member);
-        return member;
     }
 
     // 회원 정보 조회
