@@ -13,6 +13,7 @@ import project.boardservice.dto.PostUpdateDto;
 import project.boardservice.exception.UnauthorizedMemberException;
 import project.boardservice.repository.MemberRepository;
 import project.boardservice.repository.PostRepository;
+import project.boardservice.repository.PostSearch;
 
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +63,7 @@ public class PostService {
         Member member = memberRepository.findById(memberId).orElseThrow();
         Post post = postRepository.findById(postId).orElseThrow();
 
-        // 수정
+        // 본인 게시글만 수정 가능
         if(member == post.getMember())
             post.updatePost(postUpdateDto.getTitle(), postUpdateDto.getContent(), postUpdateDto.getModifiedDate());
         else {
@@ -76,10 +77,16 @@ public class PostService {
         Member member = memberRepository.findById(memberId).orElseThrow();
         Post post = postRepository.findById(postId).orElseThrow();
 
+        // 본인 게시글만 삭제 가능
         if(member == post.getMember())
             postRepository.delete(post);
         else {
             throw new UnauthorizedMemberException("허가되지 않은 사용자입니다.");
         }
+    }
+
+    // 게시글 검색
+    public List<Post> findPosts(PostSearch postSearch) {
+        return postRepository.findAllByString(postSearch);
     }
 }

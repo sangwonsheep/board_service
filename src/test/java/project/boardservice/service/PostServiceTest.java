@@ -11,7 +11,9 @@ import project.boardservice.dto.MemberSaveDto;
 import project.boardservice.dto.PostSaveDto;
 import project.boardservice.dto.PostUpdateDto;
 import project.boardservice.exception.UnauthorizedMemberException;
+import project.boardservice.repository.PostSearch;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.*;
@@ -118,6 +120,47 @@ class PostServiceTest {
         //then
         assertThatThrownBy(() -> postService.delete(park.getId(), post.getId()))
                 .isInstanceOf(UnauthorizedMemberException.class);
+    }
+
+    @Test
+    void 게시글_검색() {
+        //given
+        MemberSaveDto memberSaveDto = new MemberSaveDto("kim", "qweqweqwe", "김기자");
+        MemberSaveDto memberSaveDto2 = new MemberSaveDto("park", "qweqweqwe", "박기자");
+        PostSaveDto postSaveDto = new PostSaveDto("testA", "tt");
+        PostSaveDto postSaveDto2 = new PostSaveDto("testB", "tt");
+        PostSaveDto postSaveDto3 = new PostSaveDto("testC", "tt");
+        PostSaveDto postSaveDto4 = new PostSaveDto("testD", "tt");
+
+        Member memberA = memberService.save(memberSaveDto);
+        Member memberB = memberService.save(memberSaveDto2);
+        postService.save(memberA.getId(), postSaveDto);
+        postService.save(memberA.getId(), postSaveDto2);
+        postService.save(memberB.getId(), postSaveDto3);
+        postService.save(memberB.getId(), postSaveDto4);
+
+        PostSearch blank = new PostSearch("");
+        PostSearch searchA = new PostSearch("A");
+        PostSearch searchB = new PostSearch("B");
+        PostSearch searchC = new PostSearch("C");
+        PostSearch searchD = new PostSearch("D");
+        PostSearch searchTest = new PostSearch("test");
+
+        //when
+        List<Post> postBlank = postService.findPosts(blank);
+        List<Post> postSearchA = postService.findPosts(searchA);
+        List<Post> postSearchB = postService.findPosts(searchB);
+        List<Post> postSearchC = postService.findPosts(searchC);
+        List<Post> postSearchD = postService.findPosts(searchD);
+        List<Post> postSearchTest = postService.findPosts(searchTest);
+
+        //then
+        assertThat(postBlank.size()).isEqualTo(4);
+        assertThat(postSearchA.get(0).getTitle()).isEqualTo("testA");
+        assertThat(postSearchB.get(0).getTitle()).isEqualTo("testB");
+        assertThat(postSearchC.get(0).getTitle()).isEqualTo("testC");
+        assertThat(postSearchD.get(0).getTitle()).isEqualTo("testD");
+        assertThat(postSearchTest.size()).isEqualTo(4);
     }
 
 }

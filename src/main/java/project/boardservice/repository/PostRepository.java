@@ -1,13 +1,17 @@
 package project.boardservice.repository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 import project.boardservice.domain.Post;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class PostRepository {
@@ -36,4 +40,26 @@ public class PostRepository {
         em.remove(post);
     }
 
+    // 게시글 검색
+    public List<Post> findAllByString(PostSearch postSearch) {
+        String jpql = "select p from Post p";
+        boolean isFirstCondition = true;
+
+        if(StringUtils.hasText(postSearch.getTitle())){
+            if(isFirstCondition){
+                jpql += " where";
+                isFirstCondition = false;
+            }
+            jpql += " p.title like :title";
+        }
+
+        TypedQuery<Post> query = em.createQuery(jpql, Post.class)
+                .setMaxResults(1000);
+
+        if(StringUtils.hasText(postSearch.getTitle())) {
+            query = query.setParameter("title", "%" + postSearch.getTitle() + "%");
+        }
+
+        return query.getResultList();
+    }
 }
