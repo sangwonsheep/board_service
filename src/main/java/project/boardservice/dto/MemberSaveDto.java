@@ -20,6 +20,9 @@ public class MemberSaveDto {
     @Size(min = 2, max = 10, message = "이름의 길이는 2~10 사이여야 합니다.")
     private String nickname;
 
+    public MemberSaveDto() {
+    }
+
     public MemberSaveDto(Member member) {
         this.name = member.getName();
         this.password = member.getPassword();
