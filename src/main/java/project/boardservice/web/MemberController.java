@@ -76,7 +76,7 @@ public class MemberController {
         memberService.update(memberId, memberUpdateDto);
 
         return "ok";
-//        return "members/updateMember";
+//        return "redirect:/members/{memberId}";
     }
 
 }
