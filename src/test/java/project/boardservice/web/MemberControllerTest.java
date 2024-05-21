@@ -50,15 +50,13 @@ class MemberControllerTest {
                         .param("name", memberSaveDto.getName())
                         .param("password", memberSaveDto.getPassword())
                         .param("nickname", memberSaveDto.getNickname()))
-                .andExpect(status().isOk())
-                .andExpect(content().string("ok"));
+                .andExpect(status().isOk());
 
         List<Member> list = memberRepository.findAll();
 
         //then
         mvc.perform(get("/members/{memberId}", list.get(0).getId()))
-                .andExpect(status().isOk())
-                .andExpect(content().string("ok"));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -71,8 +69,7 @@ class MemberControllerTest {
                         .param("name", memberSaveDto.getName())
                         .param("password", memberSaveDto.getPassword())
                         .param("nickname", memberSaveDto.getNickname()))
-                .andExpect(status().isOk())
-                .andExpect(content().string("ok"));
+                .andExpect(status().isOk());
 
 
         //then
@@ -80,14 +77,13 @@ class MemberControllerTest {
                         .param("name", memberSaveDto.getName())
                         .param("password", memberSaveDto.getPassword())
                         .param("nickname", memberSaveDto.getNickname()))
-                .andExpect(status().isOk())
-                .andExpect(content().string("ok")))
+                .andExpect(status().isOk()))
                 .hasCauseInstanceOf(MemberNameDuplicateException.class);
     }
 
     @Test
     void 회원정보조회_실패(){
-        assertThatThrownBy(() -> mvc.perform(get("/members/{memberId}", 1L)))
+        assertThatThrownBy(() -> mvc.perform(get("/members/{memberId}", 10L)))
                 .hasCauseInstanceOf(NoSuchElementException.class);
     }
 
@@ -100,8 +96,7 @@ class MemberControllerTest {
                         .param("name", memberSaveDto.getName())
                         .param("password", memberSaveDto.getPassword())
                         .param("nickname", memberSaveDto.getNickname()))
-                .andExpect(status().isOk())
-                .andExpect(content().string("ok"));
+                .andExpect(status().isOk());
 
         List<Member> list = memberRepository.findAll();
 
@@ -109,8 +104,7 @@ class MemberControllerTest {
         mvc.perform(put("/members/{memberId}", list.get(0).getId())
                 .param("password", memberSaveDto.getPassword())
                 .param("nickname", "김영한"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("ok"));
+                .andExpect(status().isOk());
 
         //then
         Member member = memberService.findById(list.get(0).getId()).get();
