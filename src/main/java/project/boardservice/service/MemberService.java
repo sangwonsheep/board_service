@@ -39,10 +39,13 @@ public class MemberService {
 
     // 회원 정보 수정
     @Transactional
-    public void update(Long memberId, @Valid MemberUpdateDto updateParam) {
+    public void update(Long memberId, @Valid MemberUpdateDto memberUpdateDto) {
         Member member = memberRepository.findById(memberId).orElseThrow();
-        validateDuplicateUpdateMember(updateParam);
-        member.updateMember(updateParam.getPassword(), updateParam.getNickname());
+        validateDuplicateUpdateMember(memberUpdateDto);
+        if(memberUpdateDto.getPassword() == null && memberUpdateDto.getPassword().isEmpty()){
+            member.setPassword(memberUpdateDto.getPassword());
+        }
+        member.updateMember(memberUpdateDto.getPassword(), memberUpdateDto.getNickname());
     }
 
     // 저장 시 회원 중복 검사

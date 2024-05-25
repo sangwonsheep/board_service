@@ -1,6 +1,7 @@
 package project.boardservice.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +15,7 @@ import project.boardservice.dto.MemberSaveDto;
 import project.boardservice.dto.PostSaveDto;
 import project.boardservice.exception.UnauthorizedMemberException;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.*;
@@ -166,5 +168,40 @@ class CommentServiceTest {
                 .isInstanceOf(NoSuchElementException.class);
         assertThatThrownBy(() -> commentService.findById(comment2.getId()))
                 .isInstanceOf(NoSuchElementException.class);
+    }
+
+    // 한 게시글에 포함된 전체 댓글 조회
+    @Test
+    @DisplayName("한 게시글에만 포함된 전체 댓글 조회")
+    void post_comments() {
+        //given
+        MemberSaveDto memberSaveDto = new MemberSaveDto("kim", "qweqweqwe", "김기자");
+        MemberSaveDto memberSaveDto2 = new MemberSaveDto("park", "qweqweqwe", "박기자");
+        PostSaveDto postSaveDto = new PostSaveDto("post1", "post1");
+        PostSaveDto postSaveDto2 = new PostSaveDto("post2", "post2");
+        CommentSaveDto commentSaveDto = new CommentSaveDto("hi comment");
+        CommentSaveDto commentSaveDto2 = new CommentSaveDto("comment test");
+        CommentSaveDto commentSaveDto3 = new CommentSaveDto("first test");
+        CommentSaveDto commentSaveDto4 = new CommentSaveDto("second test");
+        CommentSaveDto commentSaveDto5 = new CommentSaveDto("third test");
+
+        Member kim = memberService.save(memberSaveDto);
+        Member park = memberService.save(memberSaveDto2);
+        Post post1 = postService.save(kim.getId(), postSaveDto);
+        Post post2 = postService.save(park.getId(), postSaveDto2);
+
+        commentService.save(kim.getId(), post1.getId(), commentSaveDto);
+        commentService.save(park.getId(), post1.getId(), commentSaveDto2);
+        commentService.save(kim.getId(), post2.getId(), commentSaveDto3);
+        commentService.save(kim.getId(), post2.getId(), commentSaveDto4);
+        commentService.save(park.getId(), post2.getId(), commentSaveDto5);
+
+        //when
+        List<Comment> post1_comments = commentService.findComments(post1.getId());
+        List<Comment> post2_comments = commentService.findComments(post2.getId());
+
+        //then
+        assertThat(post1_comments.size()).isEqualTo(2);
+        assertThat(post2_comments.size()).isEqualTo(3);
     }
 }

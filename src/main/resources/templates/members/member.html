@@ -1,10 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+    </style>
 </head>
 <body>
 
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2 th:text="#{page.member}">회원 정보</h2>
+    </div>
+
+    <!-- 추가 -->
+    <h2 th:if="${param.status}" th:text="'저장 완료'"></h2>
+
+    <div>
+        <label for="name" th:text="#{member.name}">회원 아이디</label>
+        <input type="text" id="name" class="form-control" th:field="${member.name}" readonly>
+    </div>
+    <div>
+        <label for="nickname" th:text="#{member.nickname}">회원 이름(닉네임)</label>
+        <input type="text" id="nickname" class="form-control" th:value="${member.nickname}" readonly>
+    </div>
+    <div>
+        <label for="password" th:text="#{member.password}">비밀번호</label>
+        <input type="password" id="password" class="form-control" th:value="${member.password}" readonly>
+    </div>
+
+    <hr class="my-4">
+
+    <div class="row">
+        <div class="col">
+            <button class="w-100 btn btn-primary btn-lg"
+                    th:onclick="|location.href='@{/members/{memberId}/edit(memberId=${member.id})}'|"
+                    type="button">회원 수정</button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg"
+                    th:onclick="|location.href='@{/}'|"
+                    type="button">취소</button>
+        </div>
+    </div>
+
+</div> <!-- /container -->
 </body>
 </html>

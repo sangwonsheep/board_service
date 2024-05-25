@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.boardservice.domain.Comment;
+import project.boardservice.domain.Member;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -23,6 +25,13 @@ public class CommentRepository {
     public Optional<Comment> findById(Long commentId) {
         Comment comment = em.find(Comment.class, commentId);
         return Optional.ofNullable(comment);
+    }
+
+    // 게시글 별 댓글 전체 조회
+    public List<Comment> findComments(Long postId) {
+        return em.createQuery("select c from Comment c where c.post.id=:postId", Comment.class)
+                .setParameter("postId", postId)
+                .getResultList();
     }
 
     // 댓글 삭제

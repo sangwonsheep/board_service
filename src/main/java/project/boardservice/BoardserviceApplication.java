@@ -3,6 +3,7 @@ package project.boardservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import project.boardservice.service.CommentService;
 import project.boardservice.service.MemberService;
 import project.boardservice.service.PostService;
 
@@ -13,7 +14,7 @@ public class BoardserviceApplication {
 		SpringApplication.run(BoardserviceApplication.class, args);
 	}
 
-	@Bean TestDataInit testDataInit(MemberService memberService, PostService postService){
-		return new TestDataInit(memberService, postService);
+	@Bean TestDataInit testDataInit(MemberService memberService, PostService postService, CommentService commentService){
+		return new TestDataInit(memberService, postService, commentService);
 	}
 }

@@ -15,6 +15,7 @@ import project.boardservice.repository.CommentRepository;
 import project.boardservice.repository.MemberRepository;
 import project.boardservice.repository.PostRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,6 +32,11 @@ public class CommentService {
     public Optional<Comment> findById(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow();
         return Optional.ofNullable(comment);
+    }
+
+    // 게시글 별 댓글 전체 조회
+    public List<Comment> findComments(Long postId) {
+        return commentRepository.findComments(postId);
     }
 
     // 댓글 작성

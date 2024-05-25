@@ -16,6 +16,9 @@ public class MemberUpdateDto {
     @Size(min = 2, max = 10, message = "이름의 길이는 2~10 사이여야 합니다.")
     private String nickname;
 
+    public MemberUpdateDto() {
+    }
+
     public MemberUpdateDto(String password, String nickname) {
         this.password = password;
         this.nickname = nickname;
