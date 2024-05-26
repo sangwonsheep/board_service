@@ -42,9 +42,14 @@ public class Member {
         this.nickname = nickname;
     }
 
-    // 수정
-    public void updateMember(String password, String nickname) {
-        this.password = password;
+    // 회원 정보 수정
+    public void updateMemberNickname(String nickname) {
         this.nickname = nickname;
     }
+
+    // 비밀번호 수정
+    public void updateMemberPassword(String password) {
+        this.password = password;
+    }
+
 }

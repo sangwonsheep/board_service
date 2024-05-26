@@ -29,10 +29,6 @@
         <label for="nickname" th:text="#{member.nickname}">회원 이름(닉네임)</label>
         <input type="text" id="nickname" class="form-control" th:value="${member.nickname}" readonly>
     </div>
-    <div>
-        <label for="password" th:text="#{member.password}">비밀번호</label>
-        <input type="password" id="password" class="form-control" th:value="${member.password}" readonly>
-    </div>
 
     <hr class="my-4">
 
@@ -40,7 +36,12 @@
         <div class="col">
             <button class="w-100 btn btn-primary btn-lg"
                     th:onclick="|location.href='@{/members/{memberId}/edit(memberId=${member.id})}'|"
-                    type="button">회원 수정</button>
+                    type="button">정보 수정</button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-primary btn-lg"
+                    th:onclick="|location.href='@{/members/{memberId}/password(memberId=${member.id})}'|"
+                    type="button">비밀번호 수정</button>
         </div>
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg"

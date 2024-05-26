@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import project.boardservice.domain.Member;
+import project.boardservice.dto.MemberPasswordUpdateDto;
 import project.boardservice.dto.MemberSaveDto;
 import project.boardservice.dto.MemberUpdateDto;
 import project.boardservice.exception.MemberNameDuplicateException;
@@ -48,7 +49,7 @@ public class MemberController {
         }
 
         // 성공 로직
-        Member member = memberService.save(memberSaveDto);
+        memberService.save(memberSaveDto);
 
         return "redirect:/"; // 로그인 페이지로 이동하기, 현재는 홈 화면인 상태
     }
@@ -57,28 +58,60 @@ public class MemberController {
     @GetMapping("/{memberId}/edit")
     public String updateMemberForm(@PathVariable Long memberId, Model model) {
         Member member = memberService.findById(memberId).get();
-        log.info("member = {}", member.getPassword());
         model.addAttribute("member", member);
         return "members/updateMemberForm";
     }
 
     // 회원 정보 수정
     @PutMapping("/{memberId}")
-    public String updateMember(@PathVariable Long memberId, @Validated @ModelAttribute MemberUpdateDto memberUpdateDto, BindingResult bindingResult, Model model) {
+    public String updateMember(@PathVariable Long memberId, @Validated @ModelAttribute("member") MemberUpdateDto memberUpdateDto, BindingResult bindingResult) {
         // 검증 실패
         if(bindingResult.hasErrors()){
             log.info("errors = {}", bindingResult);
             return "members/updateMemberForm";
         }
 
-        Member member = memberService.findById(memberId).get();
-        member.updateMember(memberUpdateDto.getPassword(), memberUpdateDto.getNickname());
-        model.addAttribute("member", member);
-
         // 성공 로직
         memberService.update(memberId, memberUpdateDto);
 
         return "redirect:/members/{memberId}";
     }
+
+    // 회원 비밀번호 수정 페이지
+    @GetMapping("/{memberId}/password")
+    public String updatePasswordForm(@PathVariable Long memberId, Model model) {
+        Member member = memberService.findById(memberId).get();
+        MemberPasswordUpdateDto memberUpdateDto = new MemberPasswordUpdateDto(member);
+        model.addAttribute("member", memberUpdateDto);
+        return "members/updatePasswordForm";
+    }
+
+    // 회원 비밀번호 수정
+    @PutMapping("/{memberId}/password")
+    public String updatePassword(@PathVariable Long memberId, @Validated @ModelAttribute("member") MemberPasswordUpdateDto memberUpdateDto, BindingResult bindingResult) {
+        Member member = memberService.findById(memberId).get();
+        // 현재 비밀번호가 일치하는지 확인
+        if(!member.getPassword().equals(memberUpdateDto.getPassword())) {
+            bindingResult.rejectValue("password", "current.member.password");
+        }
+
+        // 새 비밀번호, 확인이 일치하는지 확인
+        if(!memberUpdateDto.getNew_password().equals(memberUpdateDto.getNew_password_check())){
+            bindingResult.rejectValue("new_password", "new");
+            bindingResult.rejectValue("new_password_check", "new");
+        }
+
+        // 검증 실패
+        if(bindingResult.hasErrors()){
+            log.info("errors = {}", bindingResult);
+            return "members/updatePasswordForm";
+        }
+
+        // 성공 로직
+        memberService.updatePassword(memberId, memberUpdateDto);
+
+        return "redirect:/members/{memberId}";
+    }
+
 
 }
