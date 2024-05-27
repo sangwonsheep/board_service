@@ -49,7 +49,11 @@ public class MemberController {
         }
 
         // 성공 로직
-        memberService.save(memberSaveDto);
+        try {
+            memberService.save(memberSaveDto);
+        } catch (MemberNameDuplicateException | MemberNicknameDuplicateException e) {
+            return saveDuplicateException(e, bindingResult);
+        }
 
         return "redirect:/"; // 로그인 페이지로 이동하기, 현재는 홈 화면인 상태
     }
@@ -72,7 +76,12 @@ public class MemberController {
         }
 
         // 성공 로직
-        memberService.update(memberId, memberUpdateDto);
+        try {
+            memberService.update(memberId, memberUpdateDto);
+        }
+        catch (MemberNicknameDuplicateException e) {
+            return updateDuplicateException(e, bindingResult);
+        }
 
         return "redirect:/members/{memberId}";
     }
@@ -110,8 +119,28 @@ public class MemberController {
         // 성공 로직
         memberService.updatePassword(memberId, memberUpdateDto);
 
+
         return "redirect:/members/{memberId}";
     }
 
+    // 저장 시 예외 처리
+    private String saveDuplicateException(Exception e, BindingResult bindingResult) {
+        if (e instanceof MemberNameDuplicateException) {
+            bindingResult.rejectValue("name", "duplicate.member.name");
+        }
+        if (e instanceof MemberNicknameDuplicateException) {
+            bindingResult.rejectValue("nickname", "duplicate.member.nickname");
+        }
 
+        return "members/addMemberForm";
+    }
+
+    // 수정 시 예외 처리
+    private String updateDuplicateException(Exception e, BindingResult bindingResult) {
+        if (e instanceof MemberNicknameDuplicateException) {
+            bindingResult.rejectValue("nickname", "duplicate.member.nickname");
+        }
+
+        return "members/updateMemberForm";
+    }
 }
