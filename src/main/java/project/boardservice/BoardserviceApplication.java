@@ -14,7 +14,8 @@ public class BoardserviceApplication {
 		SpringApplication.run(BoardserviceApplication.class, args);
 	}
 
-	@Bean TestDataInit testDataInit(MemberService memberService, PostService postService, CommentService commentService){
+	@Bean
+	TestDataInit testDataInit(MemberService memberService, PostService postService, CommentService commentService){
 		return new TestDataInit(memberService, postService, commentService);
 	}
 }

@@ -40,7 +40,7 @@
             <label for="nickname" th:text="#{member.nickname}">닉네임</label>
             <input type="text" id="nickname" th:field="*{nickname}"
                    th:errorclass="field-error" class="form-control" placeholder="닉네임을 입력하세요">
-            <div class="field-error" th:errors="*{nickname}">A
+            <div class="field-error" th:errors="*{nickname}">
                 회원 닉네임 오류
             </div>
         </div>

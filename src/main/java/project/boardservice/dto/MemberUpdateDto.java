@@ -8,8 +8,6 @@ import project.boardservice.domain.Member;
 @Data
 public class MemberUpdateDto {
 
-    private Long id;
-
     @NotBlank(message = "아이디는 필수 값입니다.")
     @Size(min = 2, max = 10, message = "아이디의 길이는 2~10 사이여야 합니다.")
     private String name;
@@ -21,7 +19,8 @@ public class MemberUpdateDto {
     public MemberUpdateDto() {
     }
 
-    public MemberUpdateDto(String nickname) {
+    public MemberUpdateDto(String name, String nickname) {
+        this.name = name;
         this.nickname = nickname;
     }
 }

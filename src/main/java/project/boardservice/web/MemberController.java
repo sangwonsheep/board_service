@@ -41,7 +41,7 @@ public class MemberController {
 
     // 회원 가입
     @PostMapping("/add")
-    public String addMember(@Validated @ModelAttribute("member") MemberSaveDto memberSaveDto, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String addMember(@Validated @ModelAttribute("member") MemberSaveDto memberSaveDto, BindingResult bindingResult) {
         // 검증 실패
         if(bindingResult.hasErrors()){
             log.info("errors = {}", bindingResult);
@@ -68,10 +68,11 @@ public class MemberController {
 
     // 회원 정보 수정
     @PutMapping("/{memberId}")
-    public String updateMember(@PathVariable Long memberId, @Validated @ModelAttribute("member") MemberUpdateDto memberUpdateDto, BindingResult bindingResult) {
+    public String updateMember(@PathVariable Long memberId, @Validated @ModelAttribute("member") MemberUpdateDto memberUpdateDto, BindingResult bindingResult, Model model) {
         // 검증 실패
         if(bindingResult.hasErrors()){
             log.info("errors = {}", bindingResult);
+            model.addAttribute("memberId", memberId);
             return "members/updateMemberForm";
         }
 
@@ -90,14 +91,15 @@ public class MemberController {
     @GetMapping("/{memberId}/password")
     public String updatePasswordForm(@PathVariable Long memberId, Model model) {
         Member member = memberService.findById(memberId).get();
-        MemberPasswordUpdateDto memberUpdateDto = new MemberPasswordUpdateDto(member);
+        MemberPasswordUpdateDto memberUpdateDto = new MemberPasswordUpdateDto(member.getPassword());
         model.addAttribute("member", memberUpdateDto);
         return "members/updatePasswordForm";
     }
 
     // 회원 비밀번호 수정
     @PutMapping("/{memberId}/password")
-    public String updatePassword(@PathVariable Long memberId, @Validated @ModelAttribute("member") MemberPasswordUpdateDto memberUpdateDto, BindingResult bindingResult) {
+    public String updatePassword(@PathVariable Long memberId, @Validated @ModelAttribute("member") MemberPasswordUpdateDto memberUpdateDto,
+                                 BindingResult bindingResult, Model model) {
         Member member = memberService.findById(memberId).get();
         // 현재 비밀번호가 일치하는지 확인
         if(!member.getPassword().equals(memberUpdateDto.getPassword())) {
@@ -113,12 +115,12 @@ public class MemberController {
         // 검증 실패
         if(bindingResult.hasErrors()){
             log.info("errors = {}", bindingResult);
+            model.addAttribute("memberId", memberId);
             return "members/updatePasswordForm";
         }
 
         // 성공 로직
         memberService.updatePassword(memberId, memberUpdateDto);
-
 
         return "redirect:/members/{memberId}";
     }
