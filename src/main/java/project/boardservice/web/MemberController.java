@@ -55,7 +55,7 @@ public class MemberController {
             return saveDuplicateException(e, bindingResult);
         }
 
-        return "redirect:/"; // 로그인 페이지로 이동하기, 현재는 홈 화면인 상태
+        return "redirect:/login";
     }
 
     // 회원 정보 수정 페이지

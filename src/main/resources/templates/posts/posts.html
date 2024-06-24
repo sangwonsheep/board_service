@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div class="py-3 text-center">
+    <h2>Board Service</h2>
+</div>
+    <hr class="my-4">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <div class="col">테스트</div>
+            <button class="btn btn-outline-secondary me-md-2"
+                    th:onclick="|location.href='@{/login}'|"
+                    type="button">로그인</button>
+            <button class="btn btn-outline-secondary me-md-3"
+                    th:onclick="|location.href='@{/members/add}'|"
+                    type="button">회원가입</button>
+    </div>
+    <hr class="my-4">
+</body>
+</html>

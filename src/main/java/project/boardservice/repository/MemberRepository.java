@@ -25,6 +25,13 @@ public class MemberRepository {
         return Optional.ofNullable(member);
     }
 
+    // 로그인 ID 조회
+    public Optional<Member> findByLoginId(String loginId) {
+        return findAll().stream()
+                .filter(m -> m.getName().equals(loginId))
+                .findFirst();
+    }
+
     // 회원 전체 조회
     public List<Member> findAll() {
         return em.createQuery("select m from Member m", Member.class)

@@ -16,7 +16,7 @@ import project.boardservice.service.PostService;
 import java.util.List;
 
 @Slf4j
-@RestController
+@Controller
 @RequestMapping("/posts")
 @RequiredArgsConstructor
 public class PostController {
@@ -26,13 +26,7 @@ public class PostController {
     // 게시글 전체 조회
     @GetMapping
     public String posts(@ModelAttribute PostSearch postSearch, Model model) {
-        List<Post> posts = postService.findPosts(postSearch);
-        for (Post post : posts) {
-            log.info("post : {}", post.getTitle());
-        }
-
-        return "ok";
-//        return "posts/posts";
+        return "posts/posts";
     }
 
     // 게시글 조회
@@ -40,15 +34,13 @@ public class PostController {
     public String post(@PathVariable long postId, Model model){
         Post post = postService.findById(postId).get();
         log.info("게시글 조회 : {}", post.getTitle());
-        return "ok";
-//        return "posts/post";
+        return "posts/post";
     }
 
     // 게시글 등록 페이지
     @GetMapping("/add")
     public String addPostForm(){
-        return "ok";
-//        return "posts/addPostForm";
+        return "posts/addPostForm";
     }
 
     // 게시글 등록
@@ -63,15 +55,13 @@ public class PostController {
         // 성공 로직
         postService.save(memberId, postSaveDto);
         log.info("게시글 저장");
-        return "ok";
-//        return "redirect:/";
+        return "redirect:/";
     }
 
     // 게시글 수정 페이지
     @GetMapping("/{postId}/edit")
     public String editPostForm(@PathVariable Long postId) {
-        return "ok";
-//        return "posts/editPostForm";
+        return "posts/editPostForm";
     }
 
     // 게시글 수정
@@ -86,16 +76,14 @@ public class PostController {
 
         // 성공 로직
         postService.update(memberId, postId, postUpdateDto);
-        return "ok";
-//        return "redirect:/posts/{postId}";
+        return "redirect:/posts/{postId}";
     }
 
     // 게시글 삭제
     @DeleteMapping("/{postId}")
     public String deletePost(@RequestParam Long memberId, @PathVariable Long postId){
         postService.delete(memberId, postId);
-        return "ok";
-//        return "redirect:/";
+        return "redirect:/";
     }
 
 }

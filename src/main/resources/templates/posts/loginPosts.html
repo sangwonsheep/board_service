@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div class="py-3 text-center">
+    <h2>Board Service</h2>
+</div>
+    <hr class="my-4">
+    <form th:action="@{/logout}" th:object="${member}" method="post">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <h4 class="mb-3" th:text="|로그인: *{name}|">로그인 사용자 아이디</h4>
+                <button class="btn btn-outline-secondary me-md-2" type="submit">로그아웃</button>
+                <button class="btn btn-outline-secondary me-md-3"
+                        th:onclick="|location.href='@{/members/{memberId}(memberId=${member.id})}'|"
+                        type="button">회원 정보</button>
+        </div>
+    </form>
+    <hr class="my-4">
+</body>
+</html>
